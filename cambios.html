@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bokados Vedder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    
+    <!-- Librería necesaria -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #fff8e8; /* Color crema de fondo */
+            color: #333;
+        }
+
+        /* Cabecera y LOGO */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #fff8e8;
+        }
+
+        .logo {
+            display: block;
+            text-align: center;
+        }
+
+        .logo-text {
+            font-family: 'Varela Round', sans-serif !important;
+            color: #f7941e; /* Naranja */
+            font-size: 3.2rem;
+            font-weight: bold;
+            line-height: 1.2;
+            letter-spacing: 1px;
+        }
+
+        /* Navegación */
+        .nav {
+            background-color: #000; /* Negro */
+            padding: 12px 0;
+            margin-bottom: 30px;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        .nav a.active {
+            background-color: #f7941e; /* Naranja activo */
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Ícono Carrito con número */
+        .cart-icon {
+            color: #fff;
+            font-size: 1.2rem;
+            padding: 8px 15px;
+            position: relative;
+            cursor: pointer;
+            font-family: 'Varela Round', sans-serif;
+        }
+        #contador-carrito {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #f7941e;
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sección principal */
+        .main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title-box {
+            background-color: #f7941e;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 10px 30px;
+            display: inline-block;
+            border-radius: 12px;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        /* Secciones */
+        .seccion {
+            display: none;
+            animation: aparecer 0.3s ease;
+        }
+
+        .seccion.activa {
+            display: block;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilo para texto de información */
+        .contenido-info {
+            background-color: #f9efd8;
+            border: 2px solid #000;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .contenido-info h3 {
+            color: #f7941e;
+            margin: 20px 0 5px 0;
+            border-bottom: 1px solid #f7941e;
+            padding-bottom: 3px;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        /* Grid de productos */
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Uno debajo del otro como en tu foto */
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: #f9efd8;
+            border: 2px solid #000;
+            border-radius: 12px;
+            padding: 20px 15px 40px 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .product-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: 'Varela Round', sans-serif;
+            color: #f7941e; /* Títulos naranjas como en tu foto */
+        }
+
+        .product-img {
+            width: 150px;
+            height: auto;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+            border-radius: 8px;
+            background-color: #fff;
+            padding: 5px;
+        }
+
+        .price-tag {
+            background-color: #f7941e;
+            color: #000;
+            font-weight: bold;
+            padding: 8px 15px;
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Varela Round', sans-serif;
+        }
+        
+        .opcion-precio {
+            margin: 10px auto 20px auto;
+            padding: 8px;
+            width: 80%;
+            border: 2px solid #000;
+            border-radius: 8px;
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1rem;
+            background-color: #fff;
+        }
+
+        .add-btn {
+            background-color: #f7941e;
+            border: 2px solid #000;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 1.1rem;
+        }
+        .add-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* FORMULARIO */
+        .formulario-pedido {
+            background-color: #f9efd8;
+            border: 2px solid #000;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grupo-form {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff8e8;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background-color: #fff;
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* BOTÓN DE ENVÍO */
+        .btn-enviar {
+            background-color: #25d366;
+            color: #000;
+            font-weight: bold;
+            border: 2px solid #000;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            margin-top: 15px;
+            font-family: 'Varela Round', sans-serif;
+        }
+        .btn-enviar:hover {
+            background-color: #128c7e;
+            color: #fff;
+        }
+
+        .resumen-pedido {
+            background-color: #e2d4b8;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            display: block;
+        }
+        .item-carrito {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px dashed #aaa;
+        }
+        .quitar-item {
+            color: red;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .mensaje-exito {
+            background-color: #d4edda;
+            border: 2px solid #155724;
+            color: #155724;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #ccc;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-text">
+                Bokados<br>Vedder
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <ul>
+            <li><a href="javascript:void(0)" onclick="mostrarSeccion('catalogo')" class="active" id="btn-catalogo">Catálogo</a></li>
+            <li><a href="javascript:void(0)" onclick="mostrarSeccion('nosotros')" id="btn-nosotros">Nosotros</a></li>
+            <li><a href="javascript:void(0)" onclick="mostrarSeccion('contacto')" id="btn-contacto">Contacto</a></li>
+            <li><a href="javascript:void(0)" onclick="mostrarSeccion('pedido')" id="btn-pedido">Hacer Pedido</a></li>
+            <li class="cart-icon" onclick="mostrarSeccion('pedido')">🛒 <span id="contador-carrito">0</span></li>
+        </ul>
+    </nav>
+
+    <main class="main">
+        <!-- CATÁLOGO -->
+        <section id="catalogo" class="seccion activa">
+            <div class="title-section">
+                <div class="title-box">¡Nuestros Productos!</div>
+            </div>
+
+            <div class="products-grid">
+                <!-- FRESAS CON CREMA -->
+                <div class="product-card">
+                    <h3 class="product-name">FRESAS CON CREMA</h3>
+                    <img src="https://share.google/images/MPsK64QK1lbBmTiHY" alt="Fresas con crema" class="product-img">
+                    
+                    <select id="fresas_opcion" class="opcion-precio" onchange="cambiarPrecioFresas()">
+                        <option value="Fresas con crema - Pequeña - $8.000" data-precio="8000">Pequeña - $8.000</option>
+                        <option value="Fresas con crema - Mediana - $12.000" data-precio="12000">Mediana - $12.000</option>
+                        <option value="Fresas con crema - Grande - $15.000" data-precio="15000">Grande - $15.000</option>
+                    </select>
+                    
+                    <div class="price-tag" id="precio_fresas">Desde $8.000</div>
+                    <div class="add-btn" onclick="agregarFresasAlCarrito()">🛒</div>
+                </div>
+
+                <!-- ALFAJORES -->
+                <div class="product-card">
+                    <h3 class="product-name">ALFAJORES</h3>
+                    <img src="https://share.google/C4vnByxAExdNQfslU" alt="Alfajores" class="product-img">
+                    <p style="margin: 5px 0;">Paquete 10 und</p>
+                    <div class="price-tag">$7.000</div>
+                    <div class="add-btn" onclick="agregarAlCarrito('Alfajores (10 und)', 7000)">🛒</div>
+                </div>
+
+                <!-- GALLETAS DE LIMÓN -->
+                <div class="product-card">
+                    <h3 class="product-name">GALLETAS DE LIMÓN</h3>
+                    <img src="http://food-with-style.com/cdn/shop/articles/Lemon-Cookies-Recipe-C-f9RQutdsv_aa445d4d-8332-4070-bb4b-7bd8e6044a2c.png?v=1738111001&width=1024" alt="Galletas de limón" class="product-img">
+                    <p style="margin: 5px 0;">Paquete 12 und</p>
+                    <div class="price-tag">$6.000</div>
+                    <div class="add-btn" onclick="agregarAlCarrito('Galletas de limón (12 und)', 6000)">🛒</div>
+                </div>
+
+                <!-- YOGUR 2 LITROS -->
+                <div class="product-card">
+                    <h3 class="product-name">YOGUR 2 LITROS</h3>
+                    <img src="https://lh3.googleusercontent.com/pfJimmGUR6GQ5t61B" alt="Yogur de 2 litros" class="product-img">
+                    <div class="price-tag">$16.000</div>
+                    <div class="add-btn" onclick="agregarAlCarrito('Yogur 2 litros', 16000)">🛒</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOSOTROS -->
+        <section id="nosotros" class="seccion">
+            <div class="title-section">
+                <div class="title-box">Acerca de Nosotros</div>
+            </div>
+            <div class="contenido-info">
+                <p><strong>Nombre:</strong> “Bokados Vedder”</p>
+                <h3>¿Quiénes somos?</h3>
+                <p>Empresa dedicada a la elaboración y comercialización de productos artesanales
